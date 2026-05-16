@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QDII 基金申购额度监控</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                   "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #f0f2f5;
+      color: #222;
+    }
+    header {
+      background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+      color: #fff;
+      padding: 28px 24px 20px;
+      text-align: center;
+    }
+    header h1 { font-size: 22px; font-weight: 700; letter-spacing: .5px; }
+    header .subtitle {
+      font-size: 12px; color: #9fa8da; margin-top: 6px;
+    }
+    .container { max-width: 860px; margin: 0 auto; padding: 20px 16px 40px; }
+
+    /* 统计栏 */
+    .stats-bar {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      background: #fff; border-radius: 10px;
+      padding: 16px 20px; margin-bottom: 20px;
+      box-shadow: 0 1px 6px rgba(0,0,0,.07);
+    }
+    .stat-item {
+      flex: 1; min-width: 80px; text-align: center;
+      padding: 8px 4px; border-radius: 8px; background: #f9f9f9;
+    }
+    .stat-num { display: block; font-size: 24px; font-weight: 700; color: #283593; }
+    .stat-label { display: block; font-size: 11px; color: #888; margin-top: 2px; }
+    .stat-low .stat-num   { color: #c62828; }
+    .stat-mid .stat-num   { color: #bf360c; }
+    .stat-high .stat-num  { color: #2e7d32; }
+    .stat-suspend .stat-num { color: #555; }
+
+    /* 分区 */
+    .section {
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 1px 6px rgba(0,0,0,.07);
+      margin-bottom: 20px; overflow: hidden;
+    }
+    .section-header {
+      background: #e8eaf6; color: #1a237e;
+      font-size: 14px; font-weight: 700;
+      padding: 11px 18px;
+      border-bottom: 1px solid #c5cae9;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead tr { background: #283593; color: #fff; }
+    thead th { padding: 9px 14px; text-align: left; font-weight: 600; font-size: 12px; }
+    tbody tr:nth-child(even) { background: #fafafa; }
+    tbody tr:hover { background: #e8eaf6; }
+    td { padding: 8px 14px; border-bottom: 1px solid #f0f0f0; }
+    .td-name { font-weight: 500; }
+    .td-code { color: #888; font-size: 12px; font-family: monospace; }
+    .td-code-inline { color: #aaa; font-size: 11px; }
+    .td-status { white-space: nowrap; }
+    .td-time { color: #aaa; font-size: 11px; white-space: nowrap; }
+    .old-status { color: #aaa; text-decoration: line-through; font-size: 12px; }
+
+    /* 状态徽章 */
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 12px;
+      font-size: 12px; font-weight: 600; white-space: nowrap;
+    }
+    .badge-suspend { background: #e0e0e0; color: #555; }
+    .badge-low     { background: #ffcdd2; color: #c62828; }
+    .badge-mid     { background: #ffe0b2; color: #bf360c; }
+    .badge-high    { background: #c8e6c9; color: #2e7d32; }
+
+    /* 图例 */
+    .legend {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      font-size: 12px; color: #666; margin-bottom: 20px;
+      padding: 10px 14px; background: #fff;
+      border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.05);
+    }
+    .legend span { display: flex; align-items: center; gap: 4px; }
+
+    footer {
+      text-align: center; color: #bbb; font-size: 11px; padding: 20px 0 8px;
+    }
+    @media (max-width: 520px) {
+      header h1 { font-size: 18px; }
+      .stat-num { font-size: 20px; }
+      thead th, td { padding: 7px 8px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📈 QDII 基金申购额度监控</h1>
+    <div class="subtitle">数据来源：<a href="https://feixia.org/" style="color:#9fa8da;">feixia.org</a> &nbsp;·&nbsp; 最后更新：2026年05月16日 05:23</div>
+  </header>
+  <div class="container">
+    
+    <div class="stats-bar">
+      <div class="stat-item"><span class="stat-num">43</span><span class="stat-label">监控总数</span></div>
+      <div class="stat-item stat-low"><span class="stat-num">24</span><span class="stat-label">限购≤100元</span></div>
+      <div class="stat-item stat-mid"><span class="stat-num">4</span><span class="stat-label">限购≤1000元</span></div>
+      <div class="stat-item stat-high"><span class="stat-num">0</span><span class="stat-label">额度充裕</span></div>
+      <div class="stat-item stat-suspend"><span class="stat-num">15</span><span class="stat-label">暂停申购</span></div>
+    </div>
+    <div class="legend">
+      <span><span class="badge badge-low">限购≤100元</span> 额度极紧张</span>
+      <span><span class="badge badge-mid">限购≤1000元</span> 额度有限</span>
+      <span><span class="badge badge-high">限购充裕</span> 正常申购</span>
+      <span><span class="badge badge-suspend">暂停申购</span> 暂不可买</span>
+    </div>
+    
+        <div class="section">
+          <div class="section-header">📊 纳斯达克100</div>
+          <table>
+            <thead><tr><th>基金名称</th><th>代码</th><th>申购状态</th></tr></thead>
+            <tbody><tr><td class="td-name">国泰纳斯达克100指数QDII</td><td class="td-code">160213</td><td class="td-status"><span class="badge badge-suspend">暂停申购</span></td></tr><tr><td class="td-name">华夏纳斯达克100ETF发起式联接(QDII)A</td><td class="td-code">015299</td><td class="td-status"><span class="badge badge-suspend">暂停申购</span></td></tr><tr><td class="td-name">华夏纳斯达克100ETF发起式联接(QDII)C</td><td class="td-code">015300</td><td class="td-status"><span class="badge badge-suspend">暂停申购</span></td></tr><tr><td class="td-name">嘉实纳斯达克100联接(QDII)A人民币</td><td class="td-code">016532</td><td class="td-status"><span class="badge badge-suspend">暂停申购</span></td></tr><tr><td class="td-name">嘉实纳斯达克100联接(QDII)C人民币</td><td class="td-code">016533</td><td class="td-status"><span class="badge badge-suspend">暂停申购</span></td></tr><tr><td class="td-name">易方达纳斯达克100ETF联接 A人民币</td><td class="td-code">161130</td><td class="td-status"><span class="badge badge-suspend">暂停申购</span></td></tr><tr><td class="td-name">易方达纳斯达克100ETF联接 C人民币</td><td class="td-code">012870</td><td class="td-status"><span class="badge badge-suspend">暂停申购</span></td></tr><tr><td class="td-name">广发纳斯达克100ETF联接(QDII)A</td><td class="td-code">270042</td><td class="td-status"><span class="badge badge-low">限购 10元</span></td></tr><tr><td class="td-name">广发纳斯达克100ETF联接(QDII)C</td><td class="td-code">006479</td><td class="td-status"><span class="badge badge-low">限购 10元</span></td></tr><tr><td class="td-name">华安纳斯达克100ETF联接（QDII）A</td><td class="td-code">040046</td><td class="td-status"><span class="badge badge-low">限购 10元</span></td></tr><tr><td class="td-name">华安纳斯达克100ETF联接（QDII）C</td><td class="td-code">014978</td><td class="td-status"><span class="badge badge-low">限购 10元</span></td></tr><tr><td class="td-name">华泰柏瑞纳斯达克100ETF联接基金QDII A</td><td class="td-code">019524</td><td class="td-status"><span class="badge badge-low">限购 10元</span></td></tr><tr><td class="td-name">华泰柏瑞纳斯达克100ETF联接基金QDII C</td><td class="td-code">019525</td><td class="td-status"><span class="badge badge-low">限购 10元</span></td></tr><tr><td class="td-name">万家纳斯达克100指数发起式（QDII）A</td><td class="td-code">019441</td><td class="td-status"><span class="badge badge-low">限购 50元</span></td></tr><tr><td class="td-name">万家纳斯达克100指数发起式（QDII）C</td><td class="td-code">019442</td><td class="td-status"><span class="badge badge-low">限购 50元</span></td></tr><tr><td class="td-name">宝盈纳斯达克100指数发起（QDII）A</td><td class="td-code">019736</td><td class="td-status"><span class="badge badge-low">限购 100元</span></td></tr><tr><td class="td-name">宝盈纳斯达克100指数发起（QDII）C</td><td class="td-code">019737</td><td class="td-status"><span class="badge badge-low">限购 100元</span></td></tr><tr><td class="td-name">汇添富纳斯达克100ETF联接A</td><td class="td-code">018966</td><td class="td-status"><span class="badge badge-low">限购 100元</span></td></tr><tr><td class="td-name">汇添富纳斯达克100ETF联接C</td><td class="td-code">018967</td><td class="td-status"><span class="badge badge-low">限购 100元</span></td></tr><tr><td class="td-name">建信纳斯达克100指数QDIIA</td><td class="td-code">539001</td><td class="td-status"><span class="badge badge-low">限购 100元</span></td></tr><tr><td class="td-name">建信纳斯达克100指数（QDII）C</td><td class="td-code">012752</td><td class="td-status"><span class="badge badge-low">限购 100元</span></td></tr><tr><td class="td-name">摩根纳斯达克100指数(QDII)人民币A</td><td class="td-code">019172</td><td class="td-status"><span class="badge badge-low">限购 100元</span></td></tr><tr><td class="td-name">摩根纳斯达克100指数(QDII)人民币C</td><td class="td-code">019173</td><td class="td-status"><span class="badge badge-low">限购 100元</span></td></tr><tr><td class="td-name">天弘纳斯达克100指数发起（QDII）A</td><td class="td-code">018043</td><td class="td-status"><span class="badge badge-low">限购 100元</span></td></tr><tr><td class="td-name">天弘纳斯达克100指数发起（QDII）C</td><td class="td-code">018044</td><td class="td-status"><span class="badge badge-low">限购 100元</span></td></tr><tr><td class="td-name">招商纳斯达克100ETF发起式QDII(A类)</td><td class="td-code">019547</td><td class="td-status"><span class="badge badge-low">限购 100元</span></td></tr><tr><td class="td-name">招商纳斯达克100ETF发起式QDII(C类)</td><td class="td-code">019548</td><td class="td-status"><span class="badge badge-low">限购 100元</span></td></tr><tr><td class="td-name">南方纳斯达克100指数发起（QDII）A</td><td class="td-code">016452</td><td class="td-status"><span class="badge badge-mid">限购 200元</span></td></tr><tr><td class="td-name">南方纳斯达克100指数发起（QDII）C</td><td class="td-code">016453</td><td class="td-status"><span class="badge badge-mid">限购 200元</span></td></tr><tr><td class="td-name">大成纳斯达克100ETF联接(QDII)A</td><td class="td-code">000834</td><td class="td-status"><span class="badge badge-mid">限购 500元</span></td></tr><tr><td class="td-name">大成纳斯达克100ETF联接(QDII)C</td><td class="td-code">008971</td><td class="td-status"><span class="badge badge-mid">限购 500元</span></td></tr></tbody>
+          </table>
+        </div>
+    
+        <div class="section">
+          <div class="section-header">🏦 标普500</div>
+          <table>
+            <thead><tr><th>基金名称</th><th>代码</th><th>申购状态</th></tr></thead>
+            <tbody><tr><td class="td-name">博时标普500ETF联接(QDII)A</td><td class="td-code">050025</td><td class="td-status"><span class="badge badge-suspend">暂停申购</span></td></tr><tr><td class="td-name">博时标普500ETF联接(QDII)C</td><td class="td-code">006075</td><td class="td-status"><span class="badge badge-suspend">暂停申购</span></td></tr><tr><td class="td-name">国泰标普500ETF发起联接（QDII）A</td><td class="td-code">017028</td><td class="td-status"><span class="badge badge-suspend">暂停申购</span></td></tr><tr><td class="td-name">国泰标普500ETF发起联接（QDII）C</td><td class="td-code">017030</td><td class="td-status"><span class="badge badge-suspend">暂停申购</span></td></tr><tr><td class="td-name">华夏标普500ETF发起式联接（QDII）A</td><td class="td-code">018064</td><td class="td-status"><span class="badge badge-suspend">暂停申购</span></td></tr><tr><td class="td-name">华夏标普500ETF发起式联接（QDII）C</td><td class="td-code">018065</td><td class="td-status"><span class="badge badge-suspend">暂停申购</span></td></tr><tr><td class="td-name">易方达标普500人民币C类QDII</td><td class="td-code">012860</td><td class="td-status"><span class="badge badge-suspend">暂停申购</span></td></tr><tr><td class="td-name">易方达标普500指数(QDII-LOF)A人民币</td><td class="td-code">161125</td><td class="td-status"><span class="badge badge-suspend">暂停申购</span></td></tr><tr><td class="td-name">摩根标普500指数(QDII)人民币A</td><td class="td-code">017641</td><td class="td-status"><span class="badge badge-low">限购 100元</span></td></tr><tr><td class="td-name">摩根标普500指数(QDII)人民币C</td><td class="td-code">019305</td><td class="td-status"><span class="badge badge-low">限购 100元</span></td></tr><tr><td class="td-name">天弘标普500A</td><td class="td-code">007721</td><td class="td-status"><span class="badge badge-low">限购 100元</span></td></tr><tr><td class="td-name">天弘标普500C</td><td class="td-code">007722</td><td class="td-status"><span class="badge badge-low">限购 100元</span></td></tr></tbody>
+          </table>
+        </div>
+    
+  </div>
+  <footer>由 GitHub Actions 自动更新 · <a href="https://github.com/diyiwuyan/qdii-monitor" style="color:#bbb;">源码</a></footer>
+</body>
+</html>
